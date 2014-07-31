@@ -146,32 +146,20 @@ L.DomUtil = {
 	// you can't easily get intermediate values of properties animated with CSS3 Transitions,
 	// we need to parse computed style (in case of transform it returns matrix string)
 
-	//Gets the offset and scale of the given element as set by setTransform
+	// gets the offset and scale of the given element as set by setTransform
 	getTransform: function (el) {
-		//Only handles scale and translate matrices.
-		//Handling rotation is more complicated and we never set rotation
+		// only handles scale and translate matrices;
+		// handling rotation is more complicated and we never set rotation
 
-		//Extract offset and scale from the matrix
+		// extract offset and scale from the matrix
 		var style = window.getComputedStyle(el),
 			split = style[L.DomUtil.TRANSFORM].split(/[\(,\)]/);
 
-		//matrix
-		if (split.length === 8) {
-			return {
-				scale: parseFloat(split[1]),
-				offset: L.point(parseFloat(split[5]), parseFloat(split[6]))
-			};
-		}
+		var offset =
+			split.length ===  8 ? new L.Point(+split[5], +split[6]) : // matrix
+			split.length === 18 ? new L.Point(+split[13], +split[14]) : null; // matrix3d
 
-		//matrix3d
-		if (split.length === 18) {
-			return {
-				scale: parseFloat(split[1]),
-				offset: L.point(parseFloat(split[13]), parseFloat(split[14]))
-			};
-		}
-
-		return null;
+		return offset ? {scale: +split[1], offset: offset} : null;
 	},
 
 	setPosition: function (el, point, no3d) { // (HTMLElement, Point[, Boolean])
