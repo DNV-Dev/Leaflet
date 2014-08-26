@@ -226,8 +226,9 @@ L.Marker = L.Layer.extend({
 		if (e.type === 'mousedown') {
 			L.DomEvent.preventDefault(e);
 		}
-
-		if (e.type === 'click' && this.dragging && this.dragging.moved()) { return; }
+		
+		//added !e.pointerType to prevent termination in IE on Win8 Mobile
+		if (e.type === 'click' && this.dragging && this.dragging.moved() && !e.pointerType) { return; }
 
 		if (e.type === 'keypress' && e.keyCode === 13) {
 			type = 'click';
